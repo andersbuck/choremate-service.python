@@ -1,0 +1,5 @@
+wheel
+Flask
+gunicorn
+setuptools
+psycopg2
