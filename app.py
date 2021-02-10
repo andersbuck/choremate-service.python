@@ -15,9 +15,9 @@ def chores():
     json_data = []
     try:
         import os
-        import psycopg
+        import psycopg2
         DATABASE_URL = os.environ['DATABASE_URL']
-        conn = psycopg.connect(DATABASE_URL, sslmode='require')
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conn.cursor()
         postgreSQL_select_Query = "select * from choremate.chores"
 
@@ -29,7 +29,7 @@ def chores():
         for row in chores_records:
             json_data.append({'Id':row[0],'Name':row[1],'Description':row[2],'Score':row[3]})
 
-    except (Exception, psycopg.Error) as error :
+    except (Exception, psycopg2.Error) as error :
         print ("Error while fetching data from PostgreSQL", error)
 
     finally:
