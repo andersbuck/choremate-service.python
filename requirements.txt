@@ -4,4 +4,3 @@ gunicorn
 setuptools
 markupsafe
 psycopg2-binary
-dj-database-url
