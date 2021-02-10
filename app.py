@@ -43,7 +43,7 @@ def chores():
 
 @app.route('/chores/<int:id>')
 def chore(id):
-    json_data = null;
+    json_data = None
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conn.cursor()
@@ -53,8 +53,8 @@ def chore(id):
         print("Selecting row from chores table using cursor.fetchall")
         chores_records = cursor.fetchall() 
         
-        for row in chores_records:
-            json_data.append({'Id':row[0],'Name':row[1],'Description':row[2],'Score':row[3]})
+        row = chores_records[0]
+        json_data = ({'Id':row[0],'Name':row[1],'Description':row[2],'Score':row[3]})
 
     except (Exception, psycopg2.Error) as error :
         print ("Error while fetching data from PostgreSQL", error)
