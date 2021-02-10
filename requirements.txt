@@ -3,4 +3,4 @@ Flask
 gunicorn
 setuptools
 markupsafe
-psycopg2-binary
+psycopg2==2.4.4
