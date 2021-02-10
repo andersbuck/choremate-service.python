@@ -1,5 +1,5 @@
 wheel
-flask
+Flask
 gunicorn
 setuptools
 markupsafe
