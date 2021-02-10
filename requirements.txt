@@ -1,7 +1,0 @@
-wheel
-Flask
-gunicorn
-setuptools
-markupsafe
-psycopg2-binary
-sqlalchemy
