@@ -3,14 +3,7 @@
 from flask import Flask, jsonify
 from flask import render_template
 from markupsafe import escape
-import os
-import psycopg2
-# import dj_database_url
 app = Flask(__name__)
-
-DATABASE_URL = os.environ['DATABASE_URL']
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-# DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True) 
 
 @app.route('/')
 @app.route('/<name>')
@@ -21,6 +14,10 @@ def index(name=None):
 def chores():
     json_data = []
     try:
+        import os
+        import psycopg2
+        DATABASE_URL = os.environ['DATABASE_URL']
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conn.cursor()
         postgreSQL_select_Query = "select * from choremate.chores"
 
