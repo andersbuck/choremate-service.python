@@ -2,18 +2,15 @@
 
 from flask import Flask, jsonify
 from flask import render_template
-from flask_heroku_auth import HerokuAuth
 from markupsafe import escape
 import os
 import psycopg2
 app = Flask(__name__)
-HerokuAuth(app)
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
 @app.route('/')
 @app.route('/<name>')
-@auth.oauth
 def index(name=None):
     return render_template('index.html', name=escape(name))
 
