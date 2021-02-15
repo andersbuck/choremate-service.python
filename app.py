@@ -21,7 +21,8 @@ from flask import url_for
 from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/public', static_folder='./public')
+app.secret_key = os.environ['AUTH0_CLIENT_SECRET']
 
 oauth = OAuth(app)
 
@@ -31,6 +32,7 @@ AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
 AUTH0_BASE_URL = 'https://' + AUTH0_DOMAIN
 AUTH0_ACCESS_TOKEN_URL = AUTH0_BASE_URL + '/oauth/token'
 AUTH0_AUTHORIZE_URL = AUTH0_BASE_URL + '/authorize'
+AUTH0_CALLBACK_URL = os.environ['AUTH0_CALLBACK_URL']
 
 auth0 = oauth.register(
     'auth0',
@@ -74,7 +76,7 @@ def callback_handling():
 
 @app.route('/login')
 def login():
-    return auth0.authorize_redirect(redirect_uri='https://choremate-app.herokuapp.com/callback')
+    return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL)
 
 @app.route('/home')
 def home():
@@ -85,7 +87,7 @@ def logout():
     # Clear session stored data
     session.clear()
     # Redirect user to logout endpoint
-    params = {'returnTo': url_for('home', _external=True), 'client_id': os.environ['AUTH0_CLIENT_ID']}
+    params = {'returnTo': url_for('home', _external=True), 'client_id': AUTH0_CLIENT_ID}
     return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
 
 @app.route('/dashboard')
