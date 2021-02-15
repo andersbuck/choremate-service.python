@@ -69,6 +69,10 @@ def callback_handling():
 def login():
     return auth0.authorize_redirect(redirect_uri='https://choremate-app.herokuapp.com/callback')
 
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
 @app.route('/logout')
 def logout():
     # Clear session stored data
