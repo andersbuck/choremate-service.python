@@ -25,13 +25,19 @@ app = Flask(__name__)
 
 oauth = OAuth(app)
 
+AUTH0_CLIENT_ID = os.environ['AUTH0_CLIENT_ID']
+AUTH0_CLIENT_SECRET = os.environ['AUTH0_CLIENT_SECRET']
+AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
+AUTH0_ACCESS_TOKEN_URL = AUTH0_DOMAIN + '/oauth/token'
+AUTH0_AUTHORIZE_URL = AUTH0_DOMAIN + '/authorize'
+
 auth0 = oauth.register(
     'auth0',
-    client_id=os.environ['AUTH0_CLIENT_ID'],
-    client_secret=os.environ['AUTH0_CLIENT_SECRET'],
-    api_base_url=os.environ['AUTH0_DOMAIN'],
-    access_token_url=os.environ['AUTH0_DOMAIN'] + '/oauth/token',
-    authorize_url=os.environ['AUTH0_DOMAIN'] + '/authorize',
+    client_id=AUTH0_CLIENT_ID,
+    client_secret=AUTH0_CLIENT_SECRET,
+    api_base_url=AUTH0_DOMAIN,
+    access_token_url=AUTH0_ACCESS_TOKEN_URL,
+    authorize_url=AUTH0_AUTHORIZE_URL,
     client_kwargs={
         'scope': 'openid profile email',
     },
