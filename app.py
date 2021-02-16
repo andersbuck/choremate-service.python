@@ -24,6 +24,12 @@ from six.moves.urllib.parse import urlencode
 app = Flask(__name__, static_url_path='/public', static_folder='./public')
 app.secret_key = os.environ['AUTH0_CLIENT_SECRET']
 
+@app.errorhandler(Exception)
+def handle_auth_error(ex):
+    response = jsonify(message=str(ex))
+    response.status_code = (ex.code if isinstance(ex, HTTPException) else 500)
+    return response
+
 oauth = OAuth(app)
 
 AUTH0_CLIENT_ID = os.environ['AUTH0_CLIENT_ID']
