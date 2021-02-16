@@ -104,6 +104,7 @@ def index():
                            userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
 
 @app.route('/chores')
+@requires_auth
 def chores():
     json_data = []
     try:
@@ -131,6 +132,7 @@ def chores():
     return jsonify(json_data)
 
 @app.route('/chores/<int:id>')
+@requires_auth
 def chore(id):
     json_data = None
     try:
