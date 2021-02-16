@@ -84,7 +84,7 @@ def callback_handling():
 def login():
     return auth0.authorize_redirect(redirect_uri=APP_BASE_URL + '/callback')
 
-@app.route('/home')
+@app.route('/')
 def home():
     return render_template('home.html')
 
