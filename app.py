@@ -69,6 +69,16 @@ auth0 = oauth.register(
 DATABASE_URL = os.environ['DATABASE_URL']
 
 def requires_auth(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    if 'profile' not in session:
+      # Redirect to Login page here
+      return redirect('/')
+    return f(*args, **kwargs)
+
+  return decorated
+
+def requires_api_auth(f):
     """Determines if the Access Token is valid
     """
     @wraps(f)
@@ -198,7 +208,7 @@ def index():
                            userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
 
 @app.route('/api/chores')
-@requires_auth
+@requires_api_auth
 def chores():
     if requires_scope("read:data"):
         json_data = []
@@ -231,7 +241,7 @@ def chores():
     }, 403)
 
 @app.route('/api/chores/<int:id>')
-@requires_auth
+@requires_api_auth
 def chore(id):
     json_data = None
     try:
