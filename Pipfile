@@ -11,7 +11,7 @@ python-dotenv = '*'
 requests = '*'
 authlib = '*'
 six = '*'
-jose = '*'
+python-jose = '*'
 
 [dev-packages]
 
