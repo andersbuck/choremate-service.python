@@ -1,7 +1,4 @@
 """Flask App Project."""
-
-from flask import Flask, jsonify
-from flask import render_template
 from markupsafe import escape
 import os
 import psycopg2
@@ -18,6 +15,7 @@ from flask import redirect
 from flask import render_template
 from flask import session
 from flask import url_for
+from flask import request
 from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
 from jose import jwt
@@ -90,6 +88,34 @@ def requires_scope(required_scope):
             if token_scope == required_scope:
                 return True
     return False
+
+def get_token_auth_header():
+    """Obtains the access token from the Authorization Header
+    """
+    auth = request.headers.get("Authorization", None)
+    if not auth:
+        raise AuthError({"code": "authorization_header_missing",
+                        "description":
+                            "Authorization header is expected"}, 401)
+
+    parts = auth.split()
+
+    if parts[0].lower() != "bearer":
+        raise AuthError({"code": "invalid_header",
+                        "description":
+                            "Authorization header must start with"
+                            " Bearer"}, 401)
+    elif len(parts) == 1:
+        raise AuthError({"code": "invalid_header",
+                        "description": "Token not found"}, 401)
+    elif len(parts) > 2:
+        raise AuthError({"code": "invalid_header",
+                        "description":
+                            "Authorization header must be"
+                            " Bearer token"}, 401)
+
+    token = parts[1]
+    return token
 
 @app.route('/callback')
 def callback_handling():
