@@ -20,6 +20,7 @@ from flask import session
 from flask import url_for
 from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
+from jose import jwt
 
 app = Flask(__name__, static_url_path='/public', static_folder='./public')
 app.secret_key = os.environ['AUTH0_CLIENT_SECRET']
@@ -28,6 +29,18 @@ app.secret_key = os.environ['AUTH0_CLIENT_SECRET']
 def handle_auth_error(ex):
     response = jsonify(message=str(ex))
     response.status_code = (ex.code if isinstance(ex, HTTPException) else 500)
+    return response
+
+# Format error response and append status code.
+class AuthError(Exception):
+    def __init__(self, error, status_code):
+        self.error = error
+        self.status_code = status_code
+
+@APP.errorhandler(AuthError)
+def handle_auth_error(ex):
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
     return response
 
 oauth = OAuth(app)
@@ -63,6 +76,20 @@ def requires_auth(f):
     return f(*args, **kwargs)
 
   return decorated
+
+def requires_scope(required_scope):
+    """Determines if the required scope is present in the access token
+    Args:
+        required_scope (str): The scope required to access the resource
+    """
+    token = get_token_auth_header()
+    unverified_claims = jwt.get_unverified_claims(token)
+    if unverified_claims.get("scope"):
+        token_scopes = unverified_claims["scope"].split()
+        for token_scope in token_scopes:
+            if token_scope == required_scope:
+                return True
+    return False
 
 @app.route('/callback')
 def callback_handling():
@@ -106,30 +133,35 @@ def index():
 @app.route('/chores')
 @requires_auth
 def chores():
-    json_data = []
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cursor = conn.cursor()
-        postgreSQL_select_Query = "select * from choremate.chores"
+    if requires_scope("read:data"):
+        json_data = []
+        try:
+            conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+            cursor = conn.cursor()
+            postgreSQL_select_Query = "select * from choremate.chores"
 
-        cursor.execute(postgreSQL_select_Query)
-        print("Selecting rows from chores table using cursor.fetchall")
-        chores_records = cursor.fetchall() 
-        
-        for row in chores_records:
-            json_data.append({'Id':row[0],'Name':row[1],'Description':row[2],'Score':row[3]})
+            cursor.execute(postgreSQL_select_Query)
+            print("Selecting rows from chores table using cursor.fetchall")
+            chores_records = cursor.fetchall() 
+            
+            for row in chores_records:
+                json_data.append({'Id':row[0],'Name':row[1],'Description':row[2],'Score':row[3]})
 
-    except (Exception, psycopg2.Error) as error :
-        print ("Error while fetching data from PostgreSQL", error)
+        except (Exception, psycopg2.Error) as error :
+            print ("Error while fetching data from PostgreSQL", error)
 
-    finally:
-        #closing database connection.
-        if(conn):
-            cursor.close()
-            conn.close()
-            print("PostgreSQL connection is closed")
+        finally:
+            #closing database connection.
+            if(conn):
+                cursor.close()
+                conn.close()
+                print("PostgreSQL connection is closed")
 
-    return jsonify(json_data)
+        return jsonify(json_data)
+    raise AuthError({
+        "code": "Unauthorized",
+        "description": "You don't have access to this resource"
+    }, 403)
 
 @app.route('/chores/<int:id>')
 @requires_auth
