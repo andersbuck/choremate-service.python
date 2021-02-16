@@ -32,7 +32,7 @@ AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
 AUTH0_BASE_URL = 'https://' + AUTH0_DOMAIN
 AUTH0_ACCESS_TOKEN_URL = AUTH0_BASE_URL + '/oauth/token'
 AUTH0_AUTHORIZE_URL = AUTH0_BASE_URL + '/authorize'
-AUTH0_CALLBACK_URL = os.environ['AUTH0_CALLBACK_URL']
+APP_BASE_URL = os.environ['APP_BASE_URL']
 
 auth0 = oauth.register(
     'auth0',
@@ -72,11 +72,11 @@ def callback_handling():
         'name': userinfo['name'],
         'picture': userinfo['picture']
     }
-    return redirect('/Anderson')
+    return redirect('/dashboard')
 
 @app.route('/login')
 def login():
-    return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL)
+    return auth0.authorize_redirect(redirect_uri=APP_BASE_URL + '/callback')
 
 @app.route('/home')
 def home():
