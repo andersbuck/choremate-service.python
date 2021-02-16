@@ -156,7 +156,7 @@ def index():
                            userinfo=session['profile'],
                            userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
 
-@app.route('/chores')
+@app.route('/api/chores')
 @requires_auth
 def chores():
     if requires_scope("read:data"):
@@ -189,7 +189,7 @@ def chores():
         "description": "You don't have access to this resource"
     }, 403)
 
-@app.route('/chores/<int:id>')
+@app.route('/api/chores/<int:id>')
 @requires_auth
 def chore(id):
     json_data = None
