@@ -212,6 +212,11 @@ def index():
                            userinfo=session['profile'],
                            userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
 
+@app.route('/admin')
+@requires_auth
+def admin():
+    return render_template('admin.html', userinfo=session['profile'])
+
 @app.route('/api/chores')
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_api_auth
