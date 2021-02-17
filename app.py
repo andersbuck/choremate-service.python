@@ -67,7 +67,7 @@ auth0 = oauth.register(
     access_token_url=AUTH0_ACCESS_TOKEN_URL,
     authorize_url=AUTH0_AUTHORIZE_URL,
     client_kwargs={
-        'scope': 'openid profile email',
+        'scope': 'openid profile email read:data',
     },
 )
 
