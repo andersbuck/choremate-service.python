@@ -185,8 +185,7 @@ def callback_handling():
     session['profile'] = {
         'user_id': userinfo['sub'],
         'name': userinfo['name'],
-        'picture': userinfo['picture'],
-        'access_token': response
+        'picture': userinfo['picture']
     }
     return redirect('/dashboard')
 
