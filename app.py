@@ -21,6 +21,7 @@ from six.moves.urllib.parse import urlencode
 from jose import jwt
 
 from six.moves.urllib.request import urlopen
+
 from flask import _request_ctx_stack
 from flask_cors import cross_origin
 
@@ -175,7 +176,7 @@ def get_token_auth_header():
 @app.route('/callback')
 def callback_handling():
     # Handles response from token endpoint
-    auth0.authorize_access_token()
+    response = jsonify(auth0.authorize_access_token())
     resp = auth0.get(AUTH0_BASE_URL + '/userinfo')
     userinfo = resp.json()
 
@@ -184,7 +185,8 @@ def callback_handling():
     session['profile'] = {
         'user_id': userinfo['sub'],
         'name': userinfo['name'],
-        'picture': userinfo['picture']
+        'picture': userinfo['picture'],
+        'access_token':response
     }
     return redirect('/dashboard')
 
@@ -209,7 +211,7 @@ def logout():
 def index():
     return render_template('dashboard.html',
                            userinfo=session['profile'],
-                           userinfo_pretty=session['jwt_payload'])
+                           userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
 
 @app.route('/api/chores')
 @cross_origin(headers=["Content-Type", "Authorization"])
