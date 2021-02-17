@@ -209,7 +209,7 @@ def logout():
 def index():
     return render_template('dashboard.html',
                            userinfo=session['profile'],
-                           userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
+                           userinfo_pretty=session['jwt_payload'])
 
 @app.route('/api/chores')
 @cross_origin(headers=["Content-Type", "Authorization"])
