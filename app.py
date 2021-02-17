@@ -192,7 +192,7 @@ def callback_handling():
 
 @app.route('/login')
 def login():
-    return auth0.authorize_redirect(redirect_uri=APP_BASE_URL + '/callback', audience='https://choremate-app.herokuapp.com/api')
+    return auth0.authorize_redirect(redirect_uri=APP_BASE_URL + '/callback', audience='https://choremate-app.herokuapp.com')
 
 @app.route('/')
 def home():
