@@ -176,7 +176,7 @@ def requires_scope(required_scope):
 @app.route('/callback')
 def callback_handling():
     # Handles response from token endpoint
-    auth0.authorize_access_token()
+    response = jsonify(auth0.authorize_access_token())
     resp = auth0.get(AUTH0_BASE_URL + '/userinfo')
     userinfo = resp.json()
 
@@ -185,9 +185,10 @@ def callback_handling():
     session['profile'] = {
         'user_id': userinfo['sub'],
         'name': userinfo['name'],
-        'picture': userinfo['picture']
+        'picture': userinfo['picture'],
+        'access_token': response
     }
-    return jsonify(auth0.authorize_access_token())
+    return redirect('/dashboard')
 
 @app.route('/login')
 def login():
