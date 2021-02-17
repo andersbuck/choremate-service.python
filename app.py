@@ -67,7 +67,7 @@ auth0 = oauth.register(
     access_token_url=AUTH0_ACCESS_TOKEN_URL,
     authorize_url=AUTH0_AUTHORIZE_URL,
     client_kwargs={
-        'scope': 'openid profile email read:data',
+        'scope': 'openid profile email read:data create:data',
     },
 )
 
@@ -176,18 +176,17 @@ def get_token_auth_header():
 @app.route('/callback')
 def callback_handling():
     # Handles response from token endpoint
-    # response = jsonify(auth0.authorize_access_token())
-    # resp = auth0.get(AUTH0_BASE_URL + '/userinfo')
-    # userinfo = resp.json()
+    auth0.authorize_access_token()
+    resp = auth0.get(AUTH0_BASE_URL + '/userinfo')
+    userinfo = resp.json()
 
-    # # Store the user information in flask session.
-    # session['jwt_payload'] = userinfo
-    # session['profile'] = {
-    #     'user_id': userinfo['sub'],
-    #     'name': userinfo['name'],
-    #     'picture': userinfo['picture'],
-    #     'access_token':response
-    # }
+    # Store the user information in flask session.
+    session['jwt_payload'] = userinfo
+    session['profile'] = {
+        'user_id': userinfo['sub'],
+        'name': userinfo['name'],
+        'picture': userinfo['picture']
+    }
     return jsonify(auth0.authorize_access_token())
 
 @app.route('/login')
