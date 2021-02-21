@@ -180,7 +180,7 @@ def callback_handling():
     resp = auth0.get(AUTH0_BASE_URL + '/userinfo')
     userinfo = resp.json()
 
-    print("Response: " + response)
+    print(response)
 
     # Store the user information in flask session.
     session['jwt_payload'] = userinfo
