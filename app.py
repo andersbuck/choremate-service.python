@@ -186,7 +186,8 @@ def callback_handling():
         'user_id': userinfo['sub'],
         'name': userinfo['name'],
         'picture': userinfo['picture'],
-        'something':'else'
+        'something':'else',
+        'response':response
     }
     return redirect('/dashboard')
 
